@@ -24,10 +24,18 @@ class DataManager:
         self.iteration_counter = 0
 
     def start(self):
+
+        # Tell the visualizer what method should be called each time it is about to update the graph.
         self.dv.set_looping_function(self.iterate_loop)
+
+        # Tell the visualizer to begin animating.
         ani = self.dv.start_animation()
 
     def iterate_loop(self):
+        """
+        This method gets called over and over again by the animation loop.
+        :return:
+        """
         print(self.iteration_counter)
         self.iteration_counter += 1
 

@@ -55,6 +55,11 @@ class DataVisualizer:
         self.looping_function: Optional[Callable] = None
 
     def setup_attractor_collections(self):
+        """
+        This creates the non-empty collection of windows and attractors (large circles and stars).
+        Precondition: self.window_collection has length > 0.
+        :return: None
+        """
         self.window_collection = collections.CircleCollection(sizes=np.array([]),
                                                               offsets=np.array([]).reshape(-1,2),
                                                               offset_transform=self.ax.transData)
@@ -77,24 +82,40 @@ class DataVisualizer:
         self.ax.add_collection(self.attractor_star_collection)
 
     def setup_data_collection(self):
-
+        """
+        This creates the non-empty collection of data points (small circles).
+        Precondition: self.window_collection has length > 0.
+        :return: None
+        """
 
         self.data_circles_collection = collections.CircleCollection(sizes=self.data_size_list,
                                                                     offsets=[],
                                                                     offset_transform=self.ax.transData)
         self.ax.add_collection(self.data_circles_collection)
 
-    def set_looping_function(self, func:Callable):
+    def set_looping_function(self, func:Optional[Callable]):
+        """
+        Sets which method, if any, should be called whenever the graph is about to update.
+        :param func: the method to call, or None
+        :return: None
+        """
         self.looping_function = func
 
-    def add_data_point(self, position: Tuple[int, int], color: int = 0):
+    def add_data_point(self, position: Tuple[int, int], color_index: int = 0):
+        """
+        add a dot on the graph at the given coordinates and the color that is at color_index in the color list. If
+        color_index == -1 or is larger than the list length, adds a new color to the list and uses that.
+        :param position: The (x, y) location on the graph. (0,0) is at top left
+        :param color_index: the index of the color in color list to use
+        :return: None
+        """
         with self.lock:
             if self.data_circles_collection is None:
                 self.setup_data_collection()
             self.data_positions.append(position)
             self.data_size_list.append(math.pi*math.pow(DATA_POINT_RADIUS,2))
-            if -1 < color < len(self.color_map):  # if this is an existing color in the map
-                self.data_color_indices.append(color)
+            if -1 < color_index < len(self.color_map):  # if this is an existing color in the map
+                self.data_color_indices.append(color_index)
             else:  # if the user chose -1 or an index outside the color map, add a new color and use that.
                 self.data_color_indices.append(self.add_new_color_to_list())
             self.data_color_list.append(self.color_map[self.data_color_indices[-1]])
@@ -105,6 +126,13 @@ class DataVisualizer:
             self.data_circles_collection.set_color(self.data_color_list)
 
     def update_data_point_at_index_to_color(self, idx: int, color_index: int):
+        """
+        Changes data point number idx to have the color in the color list found at color_index. If color_index is
+        -1 or out of bounds of color_list, creates a new color and sets the color to that.
+        :param idx: index of which data point to alter
+        :param color_index: the index of the color to use.
+        :return: None
+        """
         if -1 < color_index < len(self.color_map):  # if this is an existing color in the map
             self.data_color_indices[idx] = color_index
         else:  # if the user chose -1 or an index outside the color map, add a new color and use that.
@@ -113,6 +141,14 @@ class DataVisualizer:
         self.data_circles_collection.set_color(self.data_color_list)
 
     def add_attractor(self, position: Tuple[int, int], color_index: int = 0):
+        """
+        Adds an attractor to the screen at the given location with the color found in color_list at the given
+        color_index. If color_index is -1 or out of bounds of color list, appends a new color to color_list and uses
+        that.
+        :param position: the coordinates of the attractor, (x, y). Point (0,0) is in the top left corner.
+        :param color_index: the index of the color in color_list to use.
+        :return: None
+        """
         with self.lock:
             if self.window_collection is None:
                 self.setup_attractor_collections()
@@ -135,12 +171,23 @@ class DataVisualizer:
             self.attractor_star_collection.set_sizes(self.attractor_star_size_list)
 
     def set_attractor_position(self, attractor_index:int, new_position:Tuple[int,int])->None:
+        """
+        alters the position of the attractor at the given index to a new (x, y) value
+        :param attractor_index: the index of the attractor in the list
+        :param new_position: the new location for this attractor.
+        :return: None
+        """
         with self.lock:
             self.window_positions[attractor_index] = new_position
             self.window_collection.set_offsets(np.array(self.window_positions))
             self.attractor_star_collection.set_offsets(np.array(self.attractor_star_positions))
 
     def remove_attractor_at_index(self, attractor_index:int):
+        """
+        deletes one of the attractors from the list to draw.
+        :param attractor_index: the index of the attractor to remove
+        :return: None
+        """
         with self.lock:
             del(self.window_positions[attractor_index])
             del(self.window_size_list[attractor_index])
@@ -170,7 +217,11 @@ class DataVisualizer:
         return len(self.color_map)-1
 
     def update_plot(self, frame):
-
+        """
+        This method is called automatically to animate the graph, and it calls a method set by set_looping_function.
+        :param frame: Not used.
+        :return: the list of collections that should be drawn. These have to be non-empty.
+        """
         if self.looping_function is not None:
             self.looping_function()
         items_to_update = []
@@ -182,21 +233,12 @@ class DataVisualizer:
         return items_to_update
 
     def start_animation(self):
+        """
+        begins the animation process
+        :return: the pointer to the functionAnimation, but by the time we exit, the animation window has closed.
+        """
         self.count = 0
         ani = animation.FuncAnimation(self.fig, func=self.update_plot, interval=1000, blit=True, cache_frame_data=False)
         plt.show()
-        self.stopped.set()
         return ani
 
-
-# if __name__ == "__main__":
-    # dv = DataVisualizer("texas56.png",[(1.0, 0.0, 0.0, 1.0),(0.0, 1.0, 0.0, 1.0),(1.0, 0.5, 0.0, 1.0)])
-    # dv.add_data_point((100,100),0)
-    # dv.add_data_point((200,100),1)
-    # dv.add_data_point((200,200),0)
-    # dv.add_data_point((30,30),-1)
-    # dv.update_data_point_at_index_to_color(0, 2)
-    #
-    # dv.add_attractor((300,300), 2)
-    # dv.add_attractor((400,700), -1)
-    # ani = dv.start_animation()
