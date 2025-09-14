@@ -116,6 +116,23 @@ class DataVisualizer:
         self.window_positions[attractor_index] = new_position
         self.attractors_are_dirty = True
 
+    def remove_attractor_at_index(self, attractor_index:int):
+        with self.lock:
+            del(self.window_positions[attractor_index])
+            del(self.window_size_list[attractor_index])
+            del(self.window_color_list[attractor_index])
+            del(self.attractor_star_color_list[attractor_index])
+            del(self.attractor_star_size_list[attractor_index])
+
+            self.window_collection.set_offsets(np.array(self.window_positions))
+            self.window_collection.set_color(self.window_color_list)
+            self.window_collection.set_sizes(self.window_size_list)
+            self.attractor_star_collection.set_offsets(np.array(self.attractor_star_positions))
+            self.attractor_star_collection.set_color(self.attractor_star_color_list)
+            self.attractor_star_collection.set_sizes(self.attractor_star_size_list)
+
+            self.attractors_are_dirty = True
+
     def add_new_color_to_list(self) -> int:
         """
         generates a new, random color and adds it to the color list
@@ -147,9 +164,13 @@ class DataVisualizer:
         return [self.data_circles_collection, self.window_collection, self.attractor_star_collection]
 
     def animation_driver(self):
+        count = 0
         while not self.stopped.wait(0.5):
             new_pos = (self.window_positions[0][0]+5, self.window_positions[0][1])
             self.set_attractor_position(0,new_pos)
+            if count == 4:
+                self.remove_attractor_at_index(1)
+            count+= 1
         print("animation cancelled.")
 
 
@@ -172,4 +193,5 @@ if __name__ == "__main__":
     dv.update_data_point_at_index_to_color(0, 2)
 
     dv.add_attractor((300,300), 2)
+    dv.add_attractor((400,700), -1)
     ani = dv.start_animation()
