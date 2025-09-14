@@ -62,10 +62,6 @@ class DataVisualizer:
         self.ax.add_collection(self.window_collection)
         self.ax.add_collection(self.attractor_star_collection)
 
-
-        self.data_is_dirty = True
-        self.attractors_are_dirty = True
-
         self.lock = Lock()
 
 
@@ -81,8 +77,7 @@ class DataVisualizer:
             self.data_circles_collection.set_offsets(np.array(self.data_positions))
             self.data_circles_collection.set_sizes(self.data_size_list)
             self.data_circles_collection.set_color(self.data_color_list)
-            # print(f"{self.data_circles_collection.get_offsets()=}")
-            self.data_is_dirty = True
+
 
     def update_data_point_at_index_to_color(self, idx: int, color_index: int):
         if -1 < color_index < len(self.color_map):  # if this is an existing color in the map
@@ -90,7 +85,7 @@ class DataVisualizer:
         else:  # if the user chose -1 or an index outside the color map, add a new color and use that.
             self.data_color_indices[idx] = self.add_new_color_to_list()
         self.data_color_list[idx] = self.color_map[self.data_color_indices[idx]]
-        self.data_is_dirty = True
+        self.data_circles_collection.set_color(self.data_color_list)
 
     def add_attractor(self, position: Tuple[int, int], color_index: int = 0):
         with self.lock:
@@ -110,11 +105,12 @@ class DataVisualizer:
             self.attractor_star_collection.set_offsets(np.array(self.attractor_star_positions))
             self.attractor_star_collection.set_color(self.attractor_star_color_list)
             self.attractor_star_collection.set_sizes(self.attractor_star_size_list)
-            self.attractors_are_dirty = True
 
     def set_attractor_position(self, attractor_index:int, new_position:Tuple[int,int])->None:
-        self.window_positions[attractor_index] = new_position
-        self.attractors_are_dirty = True
+        with self.lock:
+            self.window_positions[attractor_index] = new_position
+            self.window_collection.set_offsets(np.array(self.window_positions))
+            self.attractor_star_collection.set_offsets(np.array(self.attractor_star_positions))
 
     def remove_attractor_at_index(self, attractor_index:int):
         with self.lock:
@@ -131,8 +127,6 @@ class DataVisualizer:
             self.attractor_star_collection.set_color(self.attractor_star_color_list)
             self.attractor_star_collection.set_sizes(self.attractor_star_size_list)
 
-            self.attractors_are_dirty = True
-
     def add_new_color_to_list(self) -> int:
         """
         generates a new, random color and adds it to the color list
@@ -144,41 +138,17 @@ class DataVisualizer:
         return len(self.color_map)-1
 
     def update_plot(self, frame):
-
-        with self.lock:
-            if self.data_is_dirty:
-
-                # size_list = [4*math.pi for _ in range(len(self.data_positions))]
-                # self.data_circles_collection.set_offsets(np.array(self.data_positions))
-                self.data_circles_collection.set_color(self.data_color_list)
-                # self.data_circles_collection.set_sizes(self.data_size_list)
-
-                self.data_is_dirty = False
-            if self.attractors_are_dirty:
-                print(f"Dealing with dirty attractor list. {self.window_positions=}")
-                self.window_collection.set_offsets(np.array(self.window_positions))
-                self.attractor_star_collection.set_offsets(np.array(self.attractor_star_positions))
-                self.attractors_are_dirty = False
-
+        new_pos = (self.window_positions[0][0] + 5, self.window_positions[0][1])
+        self.set_attractor_position(0, new_pos)
+        if self.count == 4:
+            self.remove_attractor_at_index(1)
+        self.count += 1
 
         return [self.data_circles_collection, self.window_collection, self.attractor_star_collection]
 
-    def animation_driver(self):
-        count = 0
-        while not self.stopped.wait(0.5):
-            new_pos = (self.window_positions[0][0]+5, self.window_positions[0][1])
-            self.set_attractor_position(0,new_pos)
-            if count == 4:
-                self.remove_attractor_at_index(1)
-            count+= 1
-        print("animation cancelled.")
-
-
     def start_animation(self):
+        self.count = 0
         ani = animation.FuncAnimation(self.fig, func=self.update_plot, interval=1000, blit=True, cache_frame_data=False)
-        self.stopped = threading.Event()
-        timer = threading.Timer(1.0,self.animation_driver)
-        timer.start()
         plt.show()
         self.stopped.set()
         return ani
