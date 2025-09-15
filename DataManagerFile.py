@@ -4,6 +4,7 @@ class DataManager:
 
     def __init__(self):
         self.dv = DataVisualizer("texas56.png",[(1.0, 0.0, 0.0, 1.0),(0.0, 1.0, 0.0, 1.0),(1.0, 0.5, 0.0, 1.0)])
+        self.dv.set_axis_labels("X - axis title", "Y - axis title")
 
         # TODO: here is where you should load up your data. An example of data points being added is shown below.
         #       (Feel free to delete these examples, when you are adding yours.)

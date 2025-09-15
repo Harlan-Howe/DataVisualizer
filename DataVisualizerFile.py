@@ -54,6 +54,10 @@ class DataVisualizer:
         self.lock = Lock()
         self.looping_function: Optional[Callable] = None
 
+    def set_axis_labels(self, x_label:str, y_label:str):
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+
     def setup_attractor_collections(self):
         """
         This creates the non-empty collection of windows and attractors (large circles and stars).
