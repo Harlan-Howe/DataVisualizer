@@ -20,19 +20,21 @@ WINDOW_COLOR = (1.0, 1.0, 0.0, 0.33)
 
 class DataVisualizer:
 
-    def __init__(self, background_filename: str, color_map: Optional[List[Tuple[float,float,float,float]]] = None):
+    def __init__(self, background_filename: Optional[str], color_map: Optional[List[Tuple[float,float,float,float]]] = None):
 
         if color_map is None:
             color_map = [(0,0,0,1)] # black only.
         self.color_map = color_map
 
-        self.background = mpimg.imread(background_filename)
         self.fig, self.ax = plt.subplots()
-        height, width = self.background.shape[:2]
-        self.ax.imshow(self.background, extent= (0.0, float(width), float(height), 0.0))
 
-        self.ax.set_xlim(0, width)
-        self.ax.set_ylim(height, 0)
+        if background_filename is not None:
+            self.background = mpimg.imread(background_filename)
+            height, width = self.background.shape[:2]
+            self.ax.imshow(self.background, extent= (0.0, float(width), float(height), 0.0))
+
+            self.ax.set_xlim(0, width)
+            self.ax.set_ylim(height, 0)
 
         self.data_positions: List[Tuple[int, int]] = []
         self.data_size_list: List[float] = []
@@ -57,6 +59,20 @@ class DataVisualizer:
     def set_axis_labels(self, x_label:str, y_label:str):
         plt.xlabel(x_label)
         plt.ylabel(y_label)
+
+    def set_bounds(self, width: int, height: int, invert_y=False):
+        """
+        set the size of the window, assuming it is starting at (0,0).
+        :param width: - the maximum x-value on the graph
+        :param height: - the maximum y-value on the graph
+        :param invert_y: - whether (0,0) should be in the upper left corner like a computer science program (true) or in
+                           the lower left corner like a math graph.
+        """
+        self.ax.set_xlim(0, width)
+        if invert_y:
+            self.ax.set_ylim(height, 0)
+        else:
+            self.ax.set_ylim(0, height)
 
     def setup_attractor_collections(self):
         """

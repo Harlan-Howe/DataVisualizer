@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abce6f74-3ee5-418e-9694-34231f907018" name="Changes" comment="Improved documentation.">
-      <change beforePath="$PROJECT_DIR$/.idea/UnsupervisedFramework.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/UnsupervisedFramework.iml" afterDir="false" />
+    <list default="true" id="abce6f74-3ee5-418e-9694-34231f907018" name="Changes" comment="added parameter names to calls">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataManagerFile.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataManagerFile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataVisualizerFile.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataVisualizerFile.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +62,8 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true"
+    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
+    "settings.editor.selected.configurable": "PyPlotsConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -144,7 +144,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1750371080136</updated>
-      <workItem from="1791213166672" duration="461000" />
+      <workItem from="1791213166672" duration="2083000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit... long overdue.">
       <option name="closed" value="true" />
@@ -186,7 +186,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757881279606</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="added parameter names to calls">
+      <option name="closed" value="true" />
+      <created>1791213708273</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1791213708273</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -210,10 +218,11 @@
     <MESSAGE value="Simplified animation loop; removed redundant thread" />
     <MESSAGE value="working basis for project" />
     <MESSAGE value="Improved documentation." />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved documentation." />
+    <MESSAGE value="added parameter names to calls" />
+    <option name="LAST_COMMIT_MESSAGE" value="added parameter names to calls" />
     <option name="NON_MODAL_COMMIT_POSTPONE_SLOW_CHECKS" value="false" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DataVisualizer2025$DataManagerFile.coverage" NAME="DataManagerFile Coverage Results" MODIFIED="1791213218245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DataVisualizer2025$DataManagerFile.coverage" NAME="DataManagerFile Coverage Results" MODIFIED="1791214780897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
