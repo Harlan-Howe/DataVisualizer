@@ -252,13 +252,18 @@ class DataVisualizer:
             items_to_update.append(self.attractor_star_collection)
         return items_to_update
 
-    def start_animation(self):
+    def start_animation(self, animation_list: Optional[List[FuncAnimation]] = None):
         """
         begins the animation process
         :return: the pointer to the functionAnimation, but by the time we exit, the animation window has closed.
         """
         self.count = 0
-        ani = animation.FuncAnimation(self.fig, func=self.update_plot, interval=1000, blit=True, cache_frame_data=False)
-        plt.show()
-        return ani
+        ani = animation.FuncAnimation(self.fig, func=self.update_plot, interval=50, blit=True, cache_frame_data=False)
+        if animation_list is not None:
+            animation_list.append(ani)
 
+        # Note: once we call the plt.show(), this thread will freeze here until the window is dismissed. All other
+        #       actions will take place in the animation thread we just started.
+        plt.show()
+        
+        ani.pause()
