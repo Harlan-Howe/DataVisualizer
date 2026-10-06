@@ -1,4 +1,6 @@
+from typing import List
 
+from matplotlib.animation import FuncAnimation
 
 from DataVisualizerFile import DataVisualizer
 
@@ -33,7 +35,16 @@ class DataManager:
         self.dv.set_looping_function(self.iterate_loop)
 
         # Tell the visualizer to begin animating.
-        ani = self.dv.start_animation()
+        self.animation_function_list: List[FuncAnimation] = []
+        self.dv.start_animation(animation_list=self.animation_function_list)
+
+    def pause_animation(self):
+        if len(self.animation_function_list) > 0:
+            self.animation_function_list[0].pause()
+
+    def resume_animation(self):
+        if len(self.animation_function_list) > 0:
+            self.animation_function_list[0].resume()
 
     def iterate_loop(self):
         """
@@ -44,6 +55,7 @@ class DataManager:
         self.iteration_counter += 1
 
         # TODO: here is where you will execute a step of your algorithm.
+
 
 
 if __name__ == "__main__":
