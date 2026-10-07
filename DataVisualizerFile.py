@@ -60,19 +60,20 @@ class DataVisualizer:
         plt.xlabel(x_label)
         plt.ylabel(y_label)
 
-    def set_bounds(self, width: int, height: int, invert_y=False):
+    def set_bounds(self, min_x:float = 0.0, max_x:float=1.0, min_y:float=0.0, max_y:float=1.0, invert_y:bool = False):
         """
-        set the size of the window, assuming it is starting at (0,0).
-        :param width: - the maximum x-value on the graph
-        :param height: - the maximum y-value on the graph
-        :param invert_y: - whether (0,0) should be in the upper left corner like a computer science program (true) or in
-                           the lower left corner like a math graph.
+        rescales the window to accomodate the given range.
+        :param min_x:
+        :param max_x:
+        :param min_y:
+        :param max_y:
+        :param invert_y: whether to put the positive direction of y point down or up.
         """
-        self.ax.set_xlim(0, width)
+        self.ax.set_xlim(min_x, max_x)
         if invert_y:
-            self.ax.set_ylim(height, 0)
+            self.ax.set_ylim(max_y, min_y)
         else:
-            self.ax.set_ylim(0, height)
+            self.ax.set_ylim(min_y, max_y)
 
     def setup_attractor_collections(self):
         """
@@ -265,5 +266,5 @@ class DataVisualizer:
         # Note: once we call the plt.show(), this thread will freeze here until the window is dismissed. All other
         #       actions will take place in the animation thread we just started.
         plt.show()
-        
+
         ani.pause()
